@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>WebSocket Test</title>
+    <script language="javascript" type="text/javascript">
+        var wsUri = "";
+        var output;
+
+        var gogogo = function () {
+            var input = document.getElementById('wsAddress');
+            document.getElementById('start').style.display = 'none';
+            document.getElementById('stop').style.display = 'unset';
+            wsUri = "ws://" + input.value;
+            input.setAttribute('disabled', 'disabled');
+            init()
+        }
+
+        function init() {
+            output = document.getElementById("output");
+            output.innerHTML = 'Starting test for ' + wsUri;
+            testWebSocket();
+        }
+
+        function testWebSocket() {
+            websocket = new WebSocket(wsUri);
+            websocket.onopen = function (evt) {
+                onOpen(evt)
+            };
+            websocket.onclose = function (evt) {
+                onClose(evt)
+            };
+            websocket.onmessage = function (evt) {
+                onMessage(evt)
+            };
+            websocket.onerror = function (evt) {
+                onError(evt)
+            };
+        }
+
+        function onOpen(evt) {
+            writeToScreen("CONNECTED");
+            doSend("WebSocket rocks");
+            document.getElementById('sendBox').style.display = 'unset';
+        }
+
+        function onClose(evt) {
+            writeToScreen("DISCONNECTED");
+            document.getElementById('wsAddress').removeAttribute('disabled')
+            document.getElementById('start').style.display = 'unset';
+            document.getElementById('stop').style.display = 'none';
+            document.getElementById('sendBox').style.display = 'none';
+        }
+
+        function onMessage(evt) {
+            writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data + '</span>');
+        }
+
+        function onError(evt) {
+            writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+        }
+
+        function doSend(message) {
+            writeToScreen("SENT: " + message);
+            websocket.send(message);
+        }
+
+        function writeToScreen(message) {
+            var pre = document.createElement("p");
+            pre.style.wordWrap = "break-word";
+            pre.innerHTML = message;
+            output.appendChild(pre);
+        }
+
+        var keyPressed = function (e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                gogogo()
+            }
+        }
+
+        var checkEnter = function (e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13 && e.shiftKey) {
+                sendMessage()
+            }
+        }
+
+        var gameOver = function() {
+            websocket.close()
+        }
+
+        var sendMessage = function () {
+            doSend(document.getElementById('msg').value)
+            document.getElementById('msg').value = '';
+        }
+
+    </script>
+</head>
+<body>
+<h2>WebSocket Test</h2>
+<div>
+    <label for="wsAddress">Adres serwera WS</label>
+    <input id="wsAddress" value="echo.websocket.org/" onKeyPress="keyPressed(event)">
+    <button id="start" onclick="gogogo()">START</button>
+    <button id="stop" onclick="gameOver()" style="display: none;">CLOSE</button>
+</div>
+<fieldset>
+    <legend>Output</legend>
+    <div id="output"></div>
+    <div id="sendBox" style="display: none;">
+        <label for="msg" style="width: 25%">Your message:</label>
+        <textarea id="msg" rows="6" style="display:block;width: 70%;margin-left: 5%" onKeyPress="checkEnter(event)"></textarea>
+        <div style="text-align: right">
+            <button id="sendMsg" onclick="sendMessage()">Wyślij wiadomość</button>
+        </div>
+    </div>
+</fieldset>
+</body>
+</html>

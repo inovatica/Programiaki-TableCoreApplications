@@ -1,0 +1,15 @@
+{
+  "name": "websockets",
+  "version": "1.0.0",
+  "description": "Websocket server with broadcasting mode",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js &>/dev/null &"
+  },
+  "author": "Artur Pakuła",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^4.0.0"
+  }
+}

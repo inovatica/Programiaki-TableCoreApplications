@@ -1,0 +1,5 @@
+websockets/node_modules
+.idea
+mindstorm/.idea
+
+__pycache__/
